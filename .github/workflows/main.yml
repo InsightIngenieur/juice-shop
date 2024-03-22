@@ -1,0 +1,27 @@
+name: Dependency Check
+
+on: [push, pull_request]
+
+jobs:
+  dependency-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '14'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Generate SBOM
+        run: npx @cyclonedx/bom -o bom.xml
+
+      - name: Upload SBOM as an artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: SBOM
+          path: bom.xml
